@@ -1,0 +1,71 @@
+@import "public";
+section{
+	text-align: center;
+	line-height: 100px;
+	font-size: 0;
+	span{
+		font-size: 14px;
+		display: inline-block;
+		text-align: center;
+		width: 60px;
+		line-height: 32px;
+		height: 32px;
+		border:1px solid #ccc;
+	}
+	span:first-child,span:last-child{
+		width: 32px;
+		display: inline-block;
+		text-align: center;
+		height: 32px;
+		line-height: 32px;
+	}
+}
+li{
+	border:1px solid #ddd;
+	padding-left: 10px;
+	overflow: hidden;
+}
+li>div{
+	padding-left: 20px;
+}
+li:last-child{
+	height: 32px;
+	line-height: 30px;
+	span{
+		float: right;
+	}
+	span:first-child{
+		width: 100px;
+		text-align: center;
+	}
+}
+// $fontSize: 14px;
+// $lineHeight: 24px;
+// $culums: 4;
+// nav{
+// 	font:#{$fontSize}
+// }
+// @if $fontSize == 12px{
+// 	body{
+// 		background: red;
+// 	}
+// }@else if $fontSize == 13px{
+// 	body{
+// 		background: black;
+// 	}
+// }@else{
+// 	body{
+// 		background: none;
+// 	}
+// }
+// $colorMap:(1:red,2:yellow,3:blue,4:hotpink);
+// @mixin bgcolor($color:none){
+// 	background: $color;
+// }
+// @for $i from 1 through $culums{
+// 	li:nth-child(#{$i}){
+// 		// background: map-get($colorMap,$i);
+// 		@include bgcolor(map-get($colorMap,$i));
+// 	}
+// }
+

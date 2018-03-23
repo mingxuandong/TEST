@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>购物车</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		ul{
+			width: 700px;
+			margin:0 auto;
+		}
+		li{
+			height: 100px;
+		}
+		li img{
+			height: 80px;
+			width: 80px;
+			margin-top: 10px;
+			float: left;
+		}
+		li>div{
+			width: 400px;
+			height: 80px;
+			float: left;
+			padding-top: 10px;
+		}
+		li>section{
+			float: left;
+			width: 200px;
+			height: 100px;
+		}
+		li>div>p:first-child{
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="css/shopcar.css">
+	<script type="text/javascript" src="js/vue.min.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/product.js"></script>
+</head>
+<body>
+	<ul id="box">
+		<li v-for="key in data">
+			<img v-bind:src="key.img">
+			<div>
+				<p>{{ key.name }}</p><br>
+				<p>{{ "￥" + key.price }}</p>
+			</div>
+			<section v-bind:productid="key.sku">
+				<span class="jian">-</span>
+				<span>{{ key.num }}</span>
+				<span class="add">+</span>
+			</section>
+		</li>
+		<li id="counts">
+			<span>{{ "￥" + total }}</span><span>总计</span>
+		</li>
+	</ul>
+</body>
+<script type="text/javascript">
+	var shopCar = JSON.parse(getCookie("商品")?getCookie("商品"):"[]");
+	data = { data:shopCar };
+	var vueObj = new Vue({
+		el:"#box",
+		data:data,
+		computed:{
+			total:function(){
+				var sum = 0;
+				for(var i = 0, l = this.data.length; i < l; i++){
+					sum += this.data[i].num * parseInt(this.data[i].price);
+				}
+				return sum;
+			}
+		},
+		methods:{
+			submitProduct:function(e){
+				console.log(this);
+			}
+		}
+	});
+	$("section").on("click",function(e){
+		e = e || window.event;
+		if(!e.target.getAttribute("class")){
+			return;
+		}
+		switch(e.target.getAttribute("class")){
+			case "jian": 
+				if($(e.target).next().text() == "1"){
+					return;
+				}else{
+					for(var i = 0, leng = shopCar.length; i < leng; i++){
+						if(shopCar[i].sku == e.target.parentNode.getAttribute("productid")){
+							shopCar[i].num--;
+							setCookie("商品",JSON.stringify(shopCar),5);
+							return;
+						}
+					}
+				}
+			break;
+			case "add":
+				for(var i = 0, leng = shopCar.length; i < leng; i++){
+					if(shopCar[i].sku == e.target.parentNode.getAttribute("productid")){
+						shopCar[i].num++;
+						setCookie("商品",JSON.stringify(shopCar),5);
+						return;
+					}
+				}
+			break;
+			default:
+			break;
+		}
+	});
+	var abc = {submitProduct:function(e){console.log(this)}}
+	// document.getElementById("counts").addEventListener("click",vueObj.submitProduct,false)
+
+</script>
+</html>

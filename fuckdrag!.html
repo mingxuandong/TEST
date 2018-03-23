@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>拖拽</title>
+	<meta charset="utf-8">
+	<style type="text/css">
+		*{
+			margin: 0;
+			padding:0;
+			box-sizing: border-box;
+		}
+		#drag-container{
+			width: 400px;
+			height: 400px;
+			background: black;
+			border:2px solid red;
+			margin:0 auto;
+		}
+		#drag-container div{
+			position: fixed;
+			width: 50px;
+			height: 50px;
+		}
+		#drag-container .fdiv{
+			background: yellow;
+			/*left: 100%;*/
+		}
+		#drag-container .sdiv{
+			background: skyblue;
+		}
+	</style>
+</head>
+<body>
+	<div id="drag-container">
+		
+	</div>
+</body>
+<script type="text/javascript">
+	class Fdiv{
+		constructor(divClass){
+			this.div = document.createElement("div");
+			this.div.setAttribute("class",divClass?divClass:"fdiv");
+			this.init();
+		}
+		init(){
+			var ctner = document.getElementById("drag-container");
+			ctner.appendChild(this.div);
+			this.div.move = this.move;
+			this.div.onmousedown = this.startdrag;
+			this.div.ondragstart = function(){return false}
+			document.onmouseup = this.stopdrag;
+		}
+		startdrag(e){
+			this.ccx = e.offsetX;
+			this.ccy = e.offsetY;
+			document.onmousemove = this.move.bind(this);
+		}
+		stopdrag(){
+			document.onmousemove = null;
+			console.log(123)
+		}
+		move(e){
+			var div = this;
+			div.style.left = e.clientX - div.ccx + "px";
+			div.style.top = e.clientY - div.ccy + "px";	
+		}
+	}
+	class Sdiv extends Fdiv{
+		constructor(divClass){
+			super(divClass);
+		}
+		move(e){
+			var div = this;
+			var ctner = document.getElementById("drag-container");
+			if(e.clientY - div.ccy > ctner.offsetTop &&(e.clientY - div.ccy + div.offsetHeight) < (ctner.offsetTop + ctner.offsetHeight)){
+				div.style.top = e.clientY - div.ccy + "px";
+			}else{
+				if(e.clientY - div.ccy <= ctner.offsetTop){
+					div.style.top = ctner.offsetTop + "px";
+				}else{
+					div.style.top = ctner.offsetTop + ctner.offsetHeight - div.offsetHeight +"px";
+				}
+			}
+			if(e.clientX - div.ccx > ctner.offsetLeft &&(e.clientX - div.ccx + div.offsetWidth) < (ctner.offsetLeft + ctner.offsetWidth)){
+				div.style.left = e.clientX - div.ccx + "px";
+			}else{
+				if(e.clientX - div.ccx <= ctner.offsetLeft){
+					div.style.left = ctner.offsetLeft + "px";
+				}else{
+					div.style.left = ctner.offsetLeft + ctner.offsetWidth - div.offsetWidth +"px";
+				}
+			}
+		}
+	}
+	var f = new Fdiv();
+	var s = new Sdiv("sdiv");
+</script>
+</html>

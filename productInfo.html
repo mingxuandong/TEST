@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>商品列表页</title>
+	<style type="text/css">
+		*{
+			margin:0;
+			padding:0;
+			box-sizing: border-box;
+		}
+		ul{
+			list-style: none;
+			font-size: 0;
+			margin:0 auto;
+			width: 880px;
+			display: none;
+		}
+		a{
+			text-decoration: none;
+			color: #666;
+		}
+		ul li{
+			display: inline-block;
+			font-size: 14px;
+			height: 250px;
+			width: 220px;
+			text-align: center;
+		}
+		ul li:hover{
+			border:2px solid red;
+		}
+		ul p:nth-child(2){
+			color: red;
+		}
+		ul p:nth-child(3){
+			white-space:nowrap; 
+			overflow:hidden; 
+			text-overflow:ellipsis;
+			width: 180px;
+			margin:0 auto;
+		}
+		ul img{
+			width: 180px;
+			height: 180px;
+		}
+		header{
+			height:87px;
+		}
+		header h1{
+			width: 154px;
+			height: 87px;
+			background: url(img/jdlogo-201708-@1x.png) no-repeat 20px center;
+			float: left;
+		}
+		header>div{
+			float: right;
+			margin-top: 20px;
+			margin-right: 20px;
+			width: 120px;
+			height: 32px;
+		}
+	</style>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/vue.min.js"></script>
+	<script type="text/javascript" src="js/product.js"></script>
+</head>
+<body>
+	<header>
+		<h1></h1>
+		<div id="shopcar-btn">
+			<a href="###">购物车</a> <span id="shopcar-sum"></span>
+		</div>
+	</header>
+	<ul id="prodList">
+		<li v-for="key in data">
+			<img v-bind:src='"https://img11.360buyimg.com/n7/" + key.img '>
+			<p>{{"￥" + key.jp}}</p>
+			<p>{{key.t}}</p>
+			<a href="###" v-bind:productId="key.sku">加入购物车</a>
+		</li>
+	</ul>
+</body>
+<script type="text/javascript">
+	$.ajax({
+		url:"https://api.m.jd.com/api",
+		data:{
+			appid:"pc",
+			functionId:"mixer",
+			t:1521531424117,
+			body:'{"pin":"","p":504000,"uuid":"15215219671201112267952","lid":"1","lim":10,"skus":"","ck":"ipLoction","ec":"utf-8","c1":"670","c2":"671","c3":"672","hi":"brand:,price:,page:3"}',
+			jsonp:"jQuery56808",
+			_:1521531424118
+		},
+		dataType:"jsonp",
+		jsonpCallback:"jQuery56808",
+		success:function(data){
+			new Vue({
+				el:"#prodList",
+				data:data
+			});
+			$("#prodList").on("click","a",function(){
+				for(var i = 0 , leng = shopCar.length; i < leng; i++){
+					if(shopCar[i].sku == $(this).attr("productid")){
+						shopCar[i].num++;
+						setCookie("商品",JSON.stringify(shopCar),5);
+						reflashShopcarBtn();
+						return;
+					}
+				}
+				shopCar.push({sku:$(this).attr("productid"),num:1,name:$(this).prev().text(),img:$(this).prevAll("img").attr("src"),price:$(this).prev().prev().text().substring(1)});
+				setCookie("商品",JSON.stringify(shopCar),5);
+				reflashShopcarBtn();
+			});
+			$("#prodList").show();
+		}
+	});
+	var shopCar = JSON.parse(getCookie("商品")?getCookie("商品"):"[]");
+	reflashShopcarBtn();
+	function reflashShopcarBtn(){
+		for(var i = 0,leng = shopCar.length,sum = 0; i < leng ; i++){
+			sum += shopCar[i].num;
+		}
+		$("#shopcar-sum").text(sum);
+	}
+	$("#shopcar-btn").on("click",function(){
+		window.location.replace("shopcar.html");
+	})
+</script>
+</html>
